@@ -3,17 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace CaptionMaker.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    [Route("caption")]
+    public class CaptionMakerController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<CaptionMakerController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public CaptionMakerController(ILogger<CaptionMakerController> logger)
         {
             _logger = logger;
         }

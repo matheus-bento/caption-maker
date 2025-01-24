@@ -1,6 +1,6 @@
 @CaptionMaker_HostAddress = http://localhost:5051
 
-GET {{CaptionMaker_HostAddress}}/weatherforecast/
+GET {{CaptionMaker_HostAddress}}/caption/
 Accept: application/json
 
 ###
