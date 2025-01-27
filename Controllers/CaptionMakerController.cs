@@ -1,6 +1,7 @@
 using ImageMagick.Drawing;
 using ImageMagick;
 using Microsoft.AspNetCore.Mvc;
+using System.IO.Pipelines;
 
 namespace CaptionMaker.Controllers
 {
@@ -15,35 +16,47 @@ namespace CaptionMaker.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpPost]
+        public async Task<IActionResult> Post()
         {
-            var imageStream = new MemoryStream();
-
-            using (var image = new MagickImage(new MagickColor("#ff00ff"), 512, 128))
+            try
             {
-                image.Format = MagickFormat.Jpeg;
+                var imageStream = new MemoryStream();
 
-                new Drawables()
-                    // Draw text on the image
-                    .FontPointSize(72)
-                    .Font("./static/Ubuntu.ttf")
-                    .StrokeColor(new MagickColor("yellow"))
-                    .FillColor(MagickColors.Orange)
-                    .TextAlignment(TextAlignment.Center)
-                    .Text(256, 64, "Magick.NET")
-                    // Add an ellipse
-                    .StrokeColor(new MagickColor(0, Quantum.Max, 0))
-                    .FillColor(MagickColors.SaddleBrown)
-                    .Ellipse(256, 96, 192, 8, 0, 360)
-                    .Draw(image);
+                if (Request.ContentLength.GetValueOrDefault(0) == 0)
+                {
+                    return BadRequest("No image included in the request");
+                }
 
-                await image.WriteAsync(imageStream);
+                ReadResult reqBody = await Request.BodyReader.ReadAsync();
 
+                using (var image = new MagickImage(reqBody.Buffer))
+                {
+                    new Drawables()
+                        // Draw text on the image
+                        .FontPointSize(72)
+                        .Font("./static/Ubuntu.ttf")
+                        .StrokeColor(new MagickColor("yellow"))
+                        .FillColor(MagickColors.Orange)
+                        .TextAlignment(TextAlignment.Center)
+                        .Text(256, 64, "Magick.NET")
+                        // Add an ellipse
+                        .StrokeColor(new MagickColor(0, Quantum.Max, 0))
+                        .FillColor(MagickColors.SaddleBrown)
+                        .Ellipse(256, 96, 192, 8, 0, 360)
+                        .Draw(image);
+
+                    await image.WriteAsync(imageStream);
+
+                }
+
+                imageStream.Seek(0, SeekOrigin.Begin);
+                return new FileStreamResult(imageStream, "image/jpeg");
             }
-
-            imageStream.Seek(0, SeekOrigin.Begin);
-            return new FileStreamResult(imageStream, "image/jpeg");
+            catch
+            {
+                return StatusCode(500, "An error occurred while processing the request");
+            }
         }
     }
 }
