@@ -32,18 +32,17 @@ namespace CaptionMaker.Controllers
 
                 using (var image = new MagickImage(reqBody.Buffer))
                 {
+                    uint halfWidth = image.Width / 2;
+
                     new Drawables()
                         // Draw text on the image
                         .FontPointSize(72)
                         .Font("./static/Ubuntu.ttf")
-                        .StrokeColor(new MagickColor("yellow"))
-                        .FillColor(MagickColors.Orange)
+                        .StrokeColor(MagickColors.Black)
+                        .FillColor(MagickColors.White)
+                        // Places the text in the middle of the screen
+                        .Text(halfWidth, 80, "Test caption")
                         .TextAlignment(TextAlignment.Center)
-                        .Text(256, 64, "Magick.NET")
-                        // Add an ellipse
-                        .StrokeColor(new MagickColor(0, Quantum.Max, 0))
-                        .FillColor(MagickColors.SaddleBrown)
-                        .Ellipse(256, 96, 192, 8, 0, 360)
                         .Draw(image);
 
                     await image.WriteAsync(imageStream);
