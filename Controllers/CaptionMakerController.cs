@@ -2,6 +2,7 @@ using ImageMagick.Drawing;
 using ImageMagick;
 using Microsoft.AspNetCore.Mvc;
 using System.IO.Pipelines;
+using CaptionMaker.Model;
 
 namespace CaptionMaker.Controllers
 {
@@ -17,20 +18,24 @@ namespace CaptionMaker.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Caption([FromForm] CaptionRequest req)
         {
             try
             {
-                var imageStream = new MemoryStream();
-
-                if (Request.ContentLength.GetValueOrDefault(0) == 0)
+                if (req.Image == null)
                 {
                     return BadRequest("No image included in the request");
                 }
 
-                ReadResult reqBody = await Request.BodyReader.ReadAsync();
+                if (String.IsNullOrEmpty(req.Caption))
+                {
+                    return BadRequest("No caption included in the request");
+                }
 
-                using (var image = new MagickImage(reqBody.Buffer))
+                var imageStream = new MemoryStream();
+                Stream reqImageStream = req.Image.OpenReadStream();
+
+                using (var image = new MagickImage(reqImageStream))
                 {
                     uint halfWidth = image.Width / 2;
 
@@ -41,7 +46,7 @@ namespace CaptionMaker.Controllers
                         .StrokeColor(MagickColors.Black)
                         .FillColor(MagickColors.White)
                         // Places the text in the middle of the screen
-                        .Text(halfWidth, 80, "Test caption")
+                        .Text(halfWidth, 80, req.Caption)
                         .TextAlignment(TextAlignment.Center)
                         .Draw(image);
 
