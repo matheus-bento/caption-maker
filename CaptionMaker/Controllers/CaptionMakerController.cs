@@ -1,8 +1,7 @@
-using ImageMagick.Drawing;
-using ImageMagick;
-using Microsoft.AspNetCore.Mvc;
-using System.IO.Pipelines;
 using CaptionMaker.Model;
+using ImageMagick;
+using ImageMagick.Drawing;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CaptionMaker.Controllers
 {
@@ -37,21 +36,16 @@ namespace CaptionMaker.Controllers
 
                 using (var image = new MagickImage(reqImageStream))
                 {
-                    uint halfWidth = image.Width / 2;
+                    var captionMaker = new CaptionMaker((int) image.Width);
 
-                    new Drawables()
-                        // Draw text on the image
-                        .FontPointSize(72)
-                        .Font("./static/Ubuntu.ttf")
-                        .StrokeColor(MagickColors.Black)
-                        .FillColor(MagickColors.White)
-                        // Places the text in the middle of the screen
-                        .Text(halfWidth, 80, req.Caption)
-                        .TextAlignment(TextAlignment.Center)
-                        .Draw(image);
+                    Queue<IDrawables<byte>> captions = captionMaker.GenerateCaptions(req.Caption);
+
+                    while (captions.Count > 0)
+                    {
+                        image.Draw(captions.Dequeue());
+                    }
 
                     await image.WriteAsync(imageStream);
-
                 }
 
                 imageStream.Seek(0, SeekOrigin.Begin);
