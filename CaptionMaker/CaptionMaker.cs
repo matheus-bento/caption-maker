@@ -46,6 +46,8 @@ namespace CaptionMaker
                     .FillColor(MagickColors.White)
                     .TextAlignment(TextAlignment.Center);
 
+            text = text.Trim();
+
             int captionWidth = this.GetTextWidth(captionImageStyle, text);
 
             var captionChunks = new Queue<string>();
@@ -64,8 +66,6 @@ namespace CaptionMaker
                 // width equal to the image's width
                 do
                 {
-                    // TODO: Guard against the edge case of a string without any whitespace
-
                     // Tries to cut off a chunk of text from the caption that fits within the image
                     int chunkEnd = 0;
 
@@ -80,10 +80,22 @@ namespace CaptionMaker
                     // If the final character of the chunk is not a whitespace, it keeps going back until a
                     // whitespace is found and cuts the chunk off at that position in order to avoid cutting
                     // a word in half when breaking the captions up into several chunks
-
-                    while (chunkEnd < remainingText.Length && !Char.IsWhiteSpace(remainingText[chunkEnd]))
+                    if (chunkEnd < remainingText.Length)
                     {
-                        chunkEnd--;
+                        int gapToLastWhitespace = 0;
+
+                        while (
+                            chunkEnd > gapToLastWhitespace &&
+                            !Char.IsWhiteSpace(remainingText[chunkEnd - gapToLastWhitespace])
+                        )
+                        {
+                            gapToLastWhitespace++;
+                        }
+
+                        // Guards against chunks without whitespace. In this case, the entire chunk
+                        // is included in the line
+                        if (gapToLastWhitespace < chunkEnd)
+                            chunkEnd -= gapToLastWhitespace;
                     }
 
                     string chunk = remainingText.Substring(0, chunkEnd).Trim();
@@ -91,11 +103,9 @@ namespace CaptionMaker
                     captionChunks.Enqueue(chunk);
 
                     // Removes the chunk from the remaining of the caption text and recalculates its width
-                    remainingText = remainingText.Substring(chunkEnd);
+                    remainingText = remainingText.Substring(chunkEnd).Trim();
                 }
                 while (!String.IsNullOrEmpty(remainingText));
-
-
             }
 
             int lineCount = 1;
