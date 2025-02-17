@@ -1,0 +1,30 @@
+services:
+  captionmaker:
+    image: ${DOCKER_REGISTRY-}captionmaker
+    build:
+      context: CaptionMaker
+      dockerfile: Dockerfile
+    ports:
+        - 80:8080
+        - 81:8081
+    networks:
+      - backend
+  db:
+    image: mysql:lts
+    ports:
+        - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=caption-maker
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backend
+
+volumes:
+  db-data:
+
+networks:
+  backend:
