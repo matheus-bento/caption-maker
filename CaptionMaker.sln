@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaptionMaker.Test", "Captio
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{AA679409-75AD-4C13-AF2C-CDCF85430DB9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaptionMaker.Data", "CaptionMaker.Data\CaptionMaker.Data.csproj", "{D457ACAD-90B3-40FC-8064-D127707508AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{AA679409-75AD-4C13-AF2C-CDCF85430DB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA679409-75AD-4C13-AF2C-CDCF85430DB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA679409-75AD-4C13-AF2C-CDCF85430DB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D457ACAD-90B3-40FC-8064-D127707508AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D457ACAD-90B3-40FC-8064-D127707508AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D457ACAD-90B3-40FC-8064-D127707508AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D457ACAD-90B3-40FC-8064-D127707508AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

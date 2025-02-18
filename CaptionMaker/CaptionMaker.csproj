@@ -1,8 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>49a75b1c-6b82-46e8-ac48-18c69e82ccdc</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
@@ -13,11 +12,20 @@
   <ItemGroup>
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.4.0" />
     <PackageReference Include="Magick.NET.Core" Version="14.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.11" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="static\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CaptionMaker.Data\CaptionMaker.Data.csproj" />
   </ItemGroup>
 
 </Project>

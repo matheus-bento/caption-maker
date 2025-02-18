@@ -1,13 +1,29 @@
 using System.Text.Json;
+using CaptionMaker;
+using CaptionMaker.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Configuration.AddEnvironmentVariables("CAPTION_MAKER_");
 
 builder
     .Services
+        .Configure<CaptionMakerOptions>(builder.Configuration)
+        .AddDbContext<CaptionContext>((services, dbContextOptions) =>
+        {
+            var appOptions = services.GetRequiredService<IOptions<CaptionMakerOptions>>();
+
+            dbContextOptions.UseMySQL(
+                appOptions.Value.DbConnectionString,
+                mySqlOptions => mySqlOptions.MigrationsAssembly("CaptionMaker.Data")
+                );
+        })
         .AddControllers()
-        .AddJsonOptions(options => {
+        .AddJsonOptions(options =>
+        {
             options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
         });
