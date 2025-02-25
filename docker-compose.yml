@@ -5,16 +5,16 @@ services:
       context: CaptionMaker
       dockerfile: Dockerfile
     ports:
-        - 80:8080
-        - 81:8081
+      - 80:8080
+      - 81:8081
     environment:
-      - CAPTION_MAKER_DB_CONNECTION_STRING=Server=db;Port=3306;Database=caption-maker;Uid=${DB_USER};Pwd=${DB_PASSWORD};
+      - CAPTION_MAKER_DB_CONNECTION_STRING=Server=mysql;Port=3306;Database=caption-maker;Uid=${DB_USER};Pwd=${DB_PASSWORD};
     networks:
       - backend
-  db:
+  mysql:
     image: mysql:lts
     ports:
-        - 3306:3306
+      - 3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - MYSQL_DATABASE=caption-maker
@@ -24,9 +24,20 @@ services:
       - db-data:/var/lib/mysql
     networks:
       - backend
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    environment:
+      - NGINX_PORT=80
+    volumes:
+      - image-data:/usr/share/nginx/static
+    networks:
+      - backend
 
 volumes:
   db-data:
+  image-data:
 
 networks:
   backend:
