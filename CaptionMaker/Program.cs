@@ -1,6 +1,7 @@
 using System.Text.Json;
 using CaptionMaker;
 using CaptionMaker.Data;
+using CaptionMaker.Data.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -21,6 +22,7 @@ builder
                 mySqlOptions => mySqlOptions.MigrationsAssembly("CaptionMaker.Data")
                 );
         })
+        .AddScoped<IUserRepository, UserRepository>()
         .AddControllers()
         .AddJsonOptions(options =>
         {
