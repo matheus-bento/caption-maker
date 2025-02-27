@@ -1,78 +1,102 @@
 using System.Text;
 using System.Text.Json;
-using CaptionMaker;
 using CaptionMaker.Data;
-using CaptionMaker.Data.Repository;
-using CaptionMaker.Service;
+using CaptionMaker.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-// TODO: Put everything into a class for better organization
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Configuration.AddEnvironmentVariables("CAPTION_MAKER_");
-
-builder.Services.Configure<CaptionMakerOptions>(builder.Configuration);
-
-builder.Services.AddDbContext<CaptionContext>((services, dbContextOptions) =>
+namespace CaptionMaker
 {
-    var appOptions = services.GetRequiredService<IOptions<CaptionMakerOptions>>();
-
-    dbContextOptions.UseMySQL(
-        appOptions.Value.DbConnectionString,
-        mySqlOptions => mySqlOptions.MigrationsAssembly("CaptionMaker.Data")
-    );
-});
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<JwtService>();
-
-builder.Services
-    .AddAuthentication(authOptions =>
+    public class Program
     {
-        authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer((jwtOptions) =>
-    {
-        string jwtSecret = builder.Configuration.GetValue<string>("JWT_SECRET");
-
-        jwtOptions.TokenValidationParameters = new TokenValidationParameters
+        public static void Main(string[] args)
         {
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
-            
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
+            WebApplication app = CreateWebApplicationBuilder(args).Build();
 
-        jwtOptions.RequireHttpsMetadata = false;
-        jwtOptions.SaveToken = true;
-    });
+            // Configure the HTTP request pipeline.
 
-builder.Services
-    .AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
-        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
-    });
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
-var app = builder.Build();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-// Configure the HTTP request pipeline.
+            app.MapControllers();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
+            app.Run();
+        }
+
+        private static WebApplicationBuilder CreateWebApplicationBuilder(string[] args)
+        {
+            WebApplicationBuilder webAppBuilder = WebApplication.CreateBuilder(args);
+
+            ConfigureConfigurationProviders(webAppBuilder);
+            ConfigureServices(webAppBuilder);
+
+            return webAppBuilder;
+        }
+
+        private static void ConfigureConfigurationProviders(IHostApplicationBuilder builder)
+        {
+            builder.Configuration.AddEnvironmentVariables("CAPTION_MAKER_");
+        }
+
+        private static void ConfigureServices(IHostApplicationBuilder builder)
+        {
+            builder.Services.AddCaptionMakerRepositories();
+            builder.Services.AddCaptionMakerServices();
+
+            // Application options service (IOptions)
+
+            builder.Services.Configure<CaptionMakerOptions>(builder.Configuration);
+
+            // EF Service
+
+            builder.Services.AddDbContext<CaptionContext>((services, dbContextOptions) =>
+            {
+                var appOptions = services.GetRequiredService<IOptions<CaptionMakerOptions>>();
+
+                dbContextOptions.UseMySQL(
+                    appOptions.Value.DbConnectionString,
+                    mySqlOptions => mySqlOptions.MigrationsAssembly("CaptionMaker.Data")
+                );
+            });
+
+            // ASP.NET services
+
+            builder.Services
+                .AddAuthentication(authOptions =>
+                {
+                    authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer((jwtOptions) =>
+                {
+                    string jwtSecret = builder.Configuration.GetValue<string>("JWT_SECRET");
+
+                    jwtOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+
+                    jwtOptions.RequireHttpsMetadata = false;
+                    jwtOptions.SaveToken = true;
+                });
+
+            builder.Services
+                .AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+                });
+        }
+    }
 }
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
