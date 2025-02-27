@@ -20,7 +20,6 @@ namespace CaptionMaker.Controllers
             this._userRepo = userRepo;
         }
 
-        // TODO: Test user creation
         [AllowAnonymous]
         [HttpPost]
         [Route("create")]

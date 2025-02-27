@@ -34,8 +34,7 @@ namespace CaptionMaker.Controllers
                 {
                     var captionMaker = new CaptionMakerService((int) image.Width);
 
-                    // TODO: Run GenerateCaptions inside a Task for improved multithread performance
-                    Queue<IDrawables<byte>> captions = captionMaker.GenerateCaptions(req.Caption);
+                    Queue<IDrawables<byte>> captions = await Task.Run(() => captionMaker.GenerateCaptions(req.Caption));
 
                     while (captions.Count > 0)
                     {
