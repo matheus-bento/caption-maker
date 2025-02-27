@@ -9,6 +9,7 @@ services:
       - 81:8081
     environment:
       - CAPTION_MAKER_DB_CONNECTION_STRING=Server=mysql;Port=3306;Database=caption-maker;Uid=${DB_USER};Pwd=${DB_PASSWORD};
+      - CAPTION_MAKER_JWT_SECRET=${JWT_SECRET}
     networks:
       - backend
   mysql:

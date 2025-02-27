@@ -39,5 +39,10 @@ namespace CaptionMaker.Data.Repository
         {
             return await this._dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
+
+        public async Task<bool> UsernameAlreadyExistsAsync(string username)
+        {
+            return await this._dbContext.Users.Where(u => u.Username == username).CountAsync() > 0;
+        }
     }
 }

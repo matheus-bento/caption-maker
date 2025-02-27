@@ -1,9 +1,9 @@
 ﻿using ImageMagick;
 using ImageMagick.Drawing;
 
-namespace CaptionMaker
+namespace CaptionMaker.Service
 {
-    public class CaptionMaker
+    public class CaptionMakerService
     {
         /// <summary>
         ///     The width of the image where the caption will be drawn.
@@ -11,9 +11,9 @@ namespace CaptionMaker
         /// </summary>
         private int _imageWidth = 0;
 
-        public CaptionMaker(int imageWidth)
+        public CaptionMakerService(int imageWidth)
         {
-            this._imageWidth = imageWidth;
+            _imageWidth = imageWidth;
         }
 
         /// <summary>
@@ -28,14 +28,14 @@ namespace CaptionMaker
 
         /// <summary>
         ///     Generates objects that represents the caption lines that
-        ///     can be drawn into a <see cref="ImageMagick.MagickImage" />
+        ///     can be drawn into a <see cref="MagickImage" />
         /// </summary>
         /// <param name="text">The caption text</param>
         public Queue<IDrawables<byte>> GenerateCaptions(string text)
         {
             var captions = new Queue<IDrawables<byte>>();
 
-            int halfWidth = this._imageWidth / 2;
+            int halfWidth = _imageWidth / 2;
             int lineHeight = 80;
 
             var captionImageStyle =
@@ -48,11 +48,11 @@ namespace CaptionMaker
 
             text = text.Trim();
 
-            int captionWidth = this.GetTextWidth(captionImageStyle, text);
+            int captionWidth = GetTextWidth(captionImageStyle, text);
 
             var captionChunks = new Queue<string>();
 
-            if (captionWidth <= this._imageWidth)
+            if (captionWidth <= _imageWidth)
             {
                 // If the text already fits in the image, we simply push into the queue and return
                 // it without further manipulation
@@ -71,7 +71,7 @@ namespace CaptionMaker
 
                     while (
                         chunkEnd < remainingText.Length &&
-                        this.GetTextWidth(captionImageStyle, remainingText.Substring(0, chunkEnd + 1)) < this._imageWidth
+                        GetTextWidth(captionImageStyle, remainingText.Substring(0, chunkEnd + 1)) < _imageWidth
                     )
                     {
                         chunkEnd++;
@@ -86,7 +86,7 @@ namespace CaptionMaker
 
                         while (
                             chunkEnd > gapToLastWhitespace &&
-                            !Char.IsWhiteSpace(remainingText[chunkEnd - gapToLastWhitespace])
+                            !char.IsWhiteSpace(remainingText[chunkEnd - gapToLastWhitespace])
                         )
                         {
                             gapToLastWhitespace++;
@@ -105,7 +105,7 @@ namespace CaptionMaker
                     // Removes the chunk from the remaining of the caption text and recalculates its width
                     remainingText = remainingText.Substring(chunkEnd).Trim();
                 }
-                while (!String.IsNullOrEmpty(remainingText));
+                while (!string.IsNullOrEmpty(remainingText));
             }
 
             int lineCount = 1;

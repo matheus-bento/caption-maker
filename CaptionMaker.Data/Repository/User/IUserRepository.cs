@@ -13,5 +13,10 @@ namespace CaptionMaker.Data.Repository
         ///     Gets the data for the user with the specified username
         /// </summary>
         Task<User> GetByUsernameAsync(string username);
+
+        /// <summary>
+        ///     Determines if a given username already exists in the database
+        /// </summary>
+        Task<bool> UsernameAlreadyExistsAsync(string username);
     }
 }

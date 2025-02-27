@@ -1,21 +1,17 @@
 using CaptionMaker.Model;
+using CaptionMaker.Service;
 using ImageMagick;
 using ImageMagick.Drawing;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CaptionMaker.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("caption")]
     public class CaptionMakerController : ControllerBase
     {
-        private readonly ILogger<CaptionMakerController> _logger;
-
-        public CaptionMakerController(ILogger<CaptionMakerController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpPost]
         public async Task<IActionResult> Caption([FromForm] CaptionRequest req)
         {
@@ -36,8 +32,9 @@ namespace CaptionMaker.Controllers
 
                 using (var image = new MagickImage(reqImageStream))
                 {
-                    var captionMaker = new CaptionMaker((int) image.Width);
+                    var captionMaker = new CaptionMakerService((int) image.Width);
 
+                    // TODO: Run GenerateCaptions inside a Task for improved multithread performance
                     Queue<IDrawables<byte>> captions = captionMaker.GenerateCaptions(req.Caption);
 
                     while (captions.Count > 0)
