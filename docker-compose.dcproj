@@ -5,14 +5,12 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>aa679409-75ad-4c13-af2c-cdcf85430db9</ProjectGuid>
-    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerLaunchAction>None</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/caption</DockerServiceUrl>
     <DockerServiceName>captionmaker</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".env" />
     <None Include="docker-compose.yml" />
-    <None Include="nginx.Dockerfile" />
-    <None Include="static.conf" />
   </ItemGroup>
 </Project>

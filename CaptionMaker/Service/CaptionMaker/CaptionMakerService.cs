@@ -1,7 +1,7 @@
 ﻿using ImageMagick;
 using ImageMagick.Drawing;
 
-namespace CaptionMaker.Service
+namespace CaptionMaker.Service.CaptionMaker
 {
     public class CaptionMakerService
     {

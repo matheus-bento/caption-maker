@@ -1,5 +1,6 @@
 using CaptionMaker.Model;
-using CaptionMaker.Service;
+using CaptionMaker.Service.CaptionMaker;
+using CaptionMaker.Service.ImageStorage;
 using ImageMagick;
 using ImageMagick.Drawing;
 using Microsoft.AspNetCore.Authorization;
@@ -9,11 +10,50 @@ namespace CaptionMaker.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("caption")]
     public class CaptionMakerController : ControllerBase
     {
+        private readonly IImageStorageService _imageStorageService;
+
+        public CaptionMakerController(IImageStorageService imageStorageService)
+        {
+            this._imageStorageService = imageStorageService;
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("caption/{filename}")]
+        public async Task<IActionResult> GetCaption([FromRoute] string filename)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(filename))
+                {
+                    return BadRequest("No filename informed");
+                }
+
+                Stream caption = await this._imageStorageService.GetAsync(filename);
+
+                return new FileStreamResult(caption, "image/jpeg");
+            }
+            catch (FileNotFoundException)
+            {
+                return NotFound(new ErrorResponse
+                {
+                    Error = $"Caption '{filename}' was not fount"
+                });
+            }
+            catch
+            {
+                return StatusCode(500, new ErrorResponse
+                {
+                    Error = "An error occurred while processing the request"
+                });
+            }
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Caption([FromForm] CaptionRequest req)
+        [Route("caption")]
+        public async Task<IActionResult> SaveCaption([FromForm] SaveCaptionRequest req)
         {
             try
             {
@@ -44,12 +84,19 @@ namespace CaptionMaker.Controllers
                     await image.WriteAsync(imageStream);
                 }
 
-                imageStream.Seek(0, SeekOrigin.Begin);
-                return new FileStreamResult(imageStream, "image/jpeg");
+                string filename = await this._imageStorageService.SaveAsync(imageStream);
+
+                return Ok(new SaveCaptionResponse
+                {
+                    CaptionUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}/caption/{filename}"
+                });
             }
             catch
             {
-                return StatusCode(500, "An error occurred while processing the request");
+                return StatusCode(500, new ErrorResponse
+                {
+                    Error = "An error occurred while processing the request"
+                });
             }
         }
     }

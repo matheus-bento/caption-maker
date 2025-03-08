@@ -1,6 +1,6 @@
 namespace CaptionMaker.Model
 {
-    public class CaptionRequest
+    public class SaveCaptionRequest
     {
         public IFormFile Image { get; set; }
         public string Caption { get; set; }

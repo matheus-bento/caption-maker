@@ -6,7 +6,7 @@ using CaptionMaker.Model;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace CaptionMaker.Service
+namespace CaptionMaker.Service.JwtService
 {
     public class JwtService
     {

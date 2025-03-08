@@ -1,5 +1,6 @@
 ﻿using CaptionMaker.Data.Repository;
-using CaptionMaker.Service;
+using CaptionMaker.Service.ImageStorage;
+using CaptionMaker.Service.JwtService;
 
 namespace CaptionMaker.Extensions
 {
@@ -25,6 +26,7 @@ namespace CaptionMaker.Extensions
         public static IServiceCollection AddCaptionMakerServices(this IServiceCollection services)
         {
             services.AddScoped<JwtService>();
+            services.AddScoped<IImageStorageService, LocalImageStorageService>();
 
             return services;
         }

@@ -74,7 +74,7 @@ namespace CaptionMaker
                     authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer((jwtOptions) =>
+                .AddJwtBearer(jwtOptions =>
                 {
                     string jwtSecret = builder.Configuration.GetValue<string>("JWT_SECRET");
 

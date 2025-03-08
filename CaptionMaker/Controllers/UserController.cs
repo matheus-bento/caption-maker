@@ -1,7 +1,7 @@
 ﻿using CaptionMaker.Data.Model;
 using CaptionMaker.Data.Repository;
 using CaptionMaker.Model;
-using CaptionMaker.Service;
+using CaptionMaker.Service.JwtService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
