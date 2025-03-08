@@ -16,6 +16,7 @@ namespace CaptionMaker.Extensions
         public static IServiceCollection AddCaptionMakerRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICaptionRepository, CaptionRepository>();
 
             return services;
         }

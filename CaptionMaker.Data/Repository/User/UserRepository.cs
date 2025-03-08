@@ -5,7 +5,7 @@ namespace CaptionMaker.Data.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private CaptionContext _dbContext = null;
+        private readonly CaptionContext _dbContext = null;
 
         public UserRepository(CaptionContext dbContext)
         {

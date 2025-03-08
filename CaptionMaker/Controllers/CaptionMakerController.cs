@@ -1,3 +1,5 @@
+using CaptionMaker.Data.Model;
+using CaptionMaker.Data.Repository;
 using CaptionMaker.Model;
 using CaptionMaker.Service.CaptionMaker;
 using CaptionMaker.Service.ImageStorage;
@@ -13,16 +15,45 @@ namespace CaptionMaker.Controllers
     public class CaptionMakerController : ControllerBase
     {
         private readonly IImageStorageService _imageStorageService;
+        private readonly ICaptionRepository _captionRepository;
 
-        public CaptionMakerController(IImageStorageService imageStorageService)
+        public CaptionMakerController(IImageStorageService imageStorageService, ICaptionRepository captionRepository)
         {
             this._imageStorageService = imageStorageService;
+            this._captionRepository = captionRepository;
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("caption")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                IEnumerable<Caption> captions = await this._captionRepository.ListAsync();
+
+                return Ok(
+                    captions.Select(c => new CaptionListResponse
+                    {
+                        Filepath =
+                            $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}/caption/{c.Filepath}",
+                        Username = c.User.Username
+                    })
+                );
+            }
+            catch
+            {
+                return StatusCode(500, new ErrorResponse
+                {
+                    Error = "An error occurred while processing the request"
+                });
+            }
         }
 
         [AllowAnonymous]
         [HttpGet]
         [Route("caption/{filename}")]
-        public async Task<IActionResult> GetCaption([FromRoute] string filename)
+        public async Task<IActionResult> Get([FromRoute] string filename)
         {
             try
             {
@@ -53,7 +84,7 @@ namespace CaptionMaker.Controllers
 
         [HttpPost]
         [Route("caption")]
-        public async Task<IActionResult> SaveCaption([FromForm] SaveCaptionRequest req)
+        public async Task<IActionResult> Save([FromForm] SaveCaptionRequest req)
         {
             try
             {
@@ -85,6 +116,9 @@ namespace CaptionMaker.Controllers
                 }
 
                 string filename = await this._imageStorageService.SaveAsync(imageStream);
+
+                string username = this.User.Claims.First(c => c.Type == "name").Value;
+                await this._captionRepository.SaveAsync(filename, username);
 
                 return Ok(new SaveCaptionResponse
                 {

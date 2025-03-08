@@ -12,5 +12,15 @@ namespace CaptionMaker.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Caption> Captions { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Caption>()
+                .HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+        }
     }
 }
