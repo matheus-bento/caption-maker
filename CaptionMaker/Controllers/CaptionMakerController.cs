@@ -70,7 +70,7 @@ namespace CaptionMaker.Controllers
             {
                 return NotFound(new ErrorResponse
                 {
-                    Error = $"Caption '{filename}' was not fount"
+                    Error = $"Caption '{filename}' was not found"
                 });
             }
             catch

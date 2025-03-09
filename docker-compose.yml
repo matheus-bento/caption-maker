@@ -2,18 +2,33 @@ services:
   captionmaker:
     image: ${DOCKER_REGISTRY-}captionmaker
     build:
-      context: CaptionMaker
+      context: ./CaptionMaker
       dockerfile: Dockerfile
     ports:
-      - 80:8080
-      - 81:8081
+      - 80:80
     environment:
+      - ASPNETCORE_HTTP_PORTS=80
       - CAPTION_MAKER_DB_CONNECTION_STRING=Server=${DB_ADDRESS};Port=${DB_PORT};Database=caption-maker;Uid=${DB_USER};Pwd=${DB_PASSWORD};
       - CAPTION_MAKER_JWT_SECRET=${JWT_SECRET}
+    networks:
+      - backend
+  files:
+    image: ${DOCKER_REGISTRY-}captionmaker-files
+    build:
+      context: ./CaptionMaker.Files
+      dockerfile: Dockerfile
+      args:
+        - BASE_FILE_PATH=${BASE_FILE_PATH}
+    ports:
+      - 81:80
+    environment:
+      - ASPNETCORE_HTTP_PORTS=80
+      - CAPTION_MAKER_FILES_BASE_FILE_PATH=${BASE_FILE_PATH}
+      - CAPTION_MAKER_FILES_JWT_SECRET=${JWT_SECRET}
     volumes:
       - image-data:/usr/share/www/static
     networks:
-      - backend
+       - backend
   mysql:
     image: mysql:lts
     ports:
