@@ -1,11 +1,9 @@
 using CaptionMaker.Files.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace CaptionMaker.Files.Controllers;
 
-[Authorize]
 [ApiController]
 public class FileController : ControllerBase
 {
@@ -67,7 +65,6 @@ public class FileController : ControllerBase
 
             using (FileStream fs = System.IO.File.Create($"{this._options.Value.BaseFilePath}/{filename}"))
             {
-                this.Request.Body.Seek(0, SeekOrigin.Begin);
                 await this.Request.Body.CopyToAsync(fs);
             }
 

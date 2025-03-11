@@ -7,5 +7,8 @@
 
         [ConfigurationKeyName("JWT_SECRET")]
         public string JwtSecret { get; set; }
+
+        [ConfigurationKeyName("IMAGE_STORAGE_URL")]
+        public string ImageStorageUrl { get; set; }
     }
 }

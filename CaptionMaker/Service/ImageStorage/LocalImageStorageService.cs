@@ -5,6 +5,7 @@
     /// </summary>
     public class LocalImageStorageService : IImageStorageService
     {
+        // TODO: Pull the base file path from an env var
         private readonly string _baseFilepath = "/usr/share/www/static";
 
         public async Task<Stream> GetAsync(string filename)

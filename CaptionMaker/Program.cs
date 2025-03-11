@@ -68,6 +68,13 @@ namespace CaptionMaker
 
             // ASP.NET services
 
+            builder.Services.AddHttpClient("ImageStorage", (services, httpClient) =>
+            {
+                var appOptions = services.GetRequiredService<IOptions<CaptionMakerOptions>>();
+
+                httpClient.BaseAddress = new Uri(appOptions.Value.ImageStorageUrl);
+            });
+
             builder.Services
                 .AddAuthentication(authOptions =>
                 {

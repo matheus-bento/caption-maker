@@ -27,7 +27,9 @@ namespace CaptionMaker.Extensions
         public static IServiceCollection AddCaptionMakerServices(this IServiceCollection services)
         {
             services.AddScoped<JwtService>();
-            services.AddScoped<IImageStorageService, LocalImageStorageService>();
+
+            // TODO: Use an env var to choose the image storage method
+            services.AddScoped<IImageStorageService, HttpImageStorageService>();
 
             return services;
         }

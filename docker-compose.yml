@@ -10,6 +10,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=80
       - CAPTION_MAKER_DB_CONNECTION_STRING=Server=${DB_ADDRESS};Port=${DB_PORT};Database=caption-maker;Uid=${DB_USER};Pwd=${DB_PASSWORD};
       - CAPTION_MAKER_JWT_SECRET=${JWT_SECRET}
+      - CAPTION_MAKER_IMAGE_STORAGE_URL=${IMAGE_STORAGE_URL}
     networks:
       - backend
   files:
@@ -19,12 +20,9 @@ services:
       dockerfile: Dockerfile
       args:
         - BASE_FILE_PATH=${BASE_FILE_PATH}
-    ports:
-      - 81:80
     environment:
       - ASPNETCORE_HTTP_PORTS=80
       - CAPTION_MAKER_FILES_BASE_FILE_PATH=${BASE_FILE_PATH}
-      - CAPTION_MAKER_FILES_JWT_SECRET=${JWT_SECRET}
     volumes:
       - image-data:/usr/share/www/static
     networks:
