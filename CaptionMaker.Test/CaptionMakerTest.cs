@@ -1,4 +1,5 @@
-﻿using ImageMagick.Drawing;
+﻿using CaptionMaker.Service.CaptionMaker;
+using ImageMagick.Drawing;
 
 namespace CaptionMaker.Test;
 
@@ -8,7 +9,7 @@ public sealed class CaptionMakerTest
     [TestMethod]
     public void CaptionTextShorterThanTheImageWidthReturnsOneLine()
     {
-        var captionMaker = new CaptionMaker(1080);
+        var captionMaker = new CaptionMakerService(1080);
 
         Queue<IDrawables<byte>> captions = captionMaker.GenerateCaptions("Short caption");
 
@@ -18,7 +19,7 @@ public sealed class CaptionMakerTest
     [TestMethod]
     public void CaptionTextLongerThanTheImageWidthReturnsMultiplesLines()
     {
-        var captionMaker = new CaptionMaker(1080);
+        var captionMaker = new CaptionMakerService(1080);
 
         Queue<IDrawables<byte>> captions = captionMaker.GenerateCaptions("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada eget orci at rhoncus. Sed venenatis mattis turpis ut pretium. Nullam id faucibus neque, nec rutrum neque. Nulla id nibh sit amet.");
 
@@ -28,7 +29,7 @@ public sealed class CaptionMakerTest
     [TestMethod]
     public void CaptionTextShorterThanTheImageWidthWithoutWhitespaceReturnsOneLine()
     {
-        var captionMaker = new CaptionMaker(1080);
+        var captionMaker = new CaptionMakerService(1080);
 
         Queue<IDrawables<byte>> captions = captionMaker.GenerateCaptions("Loremipsumdolorsitamet");
 
@@ -38,7 +39,7 @@ public sealed class CaptionMakerTest
     [TestMethod]
     public void CaptionTextLongerThanTheImageWidthWithoutWhitespaceReturnsMultiplesLines()
     {
-        var captionMaker = new CaptionMaker(1080);
+        var captionMaker = new CaptionMakerService(1080);
 
         Queue<IDrawables<byte>> captions = captionMaker.GenerateCaptions("Loremipsumdolorsitamet,consecteturadipiscingelit.Sedmalesuadaegetorciatrhoncus.Sedvenenatismattisturpisutpretium.Nullamidfaucibusneque,necrutrumneque.Nullaidnibhsitamet.");
 
