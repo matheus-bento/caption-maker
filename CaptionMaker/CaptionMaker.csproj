@@ -5,7 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>49a75b1c-6b82-46e8-ac48-18c69e82ccdc</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>.</DockerfileContext>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
@@ -23,11 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="static\" />
+    <ProjectReference Include="..\CaptionMaker.Data\CaptionMaker.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CaptionMaker.Data\CaptionMaker.Data.csproj" />
+    <None Update="static\Ubuntu.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

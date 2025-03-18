@@ -2,8 +2,8 @@ services:
   captionmaker:
     image: ${DOCKER_REGISTRY-}captionmaker
     build:
-      context: ./CaptionMaker
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: CaptionMaker/Dockerfile
     ports:
       - 80:80
     environment:
@@ -17,8 +17,8 @@ services:
   files:
     image: ${DOCKER_REGISTRY-}captionmaker-files
     build:
-      context: ./CaptionMaker.Files
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: CaptionMaker.Files/Dockerfile
       args:
         - BASE_FILE_PATH=${BASE_FILE_PATH}
     environment:
