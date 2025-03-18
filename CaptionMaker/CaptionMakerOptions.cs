@@ -10,5 +10,8 @@
 
         [ConfigurationKeyName("IMAGE_STORAGE_URL")]
         public string ImageStorageUrl { get; set; }
+
+        [ConfigurationKeyName("IMAGE_STORAGE_API_KEY")]
+        public string ImageStorageApiKey { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CaptionMaker.Files.Authorization;
 
 namespace CaptionMaker.Files
 {
@@ -43,6 +44,8 @@ namespace CaptionMaker.Files
             // Application options service (IOptions)
 
             builder.Services.Configure<CaptionMakerFilesOptions>(builder.Configuration);
+
+            builder.Services.AddSingleton<ApiKeyAuthorizationFilter>();
 
             // ASP.NET Core services
 

@@ -1,9 +1,11 @@
+using CaptionMaker.Files.Authorization;
 using CaptionMaker.Files.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace CaptionMaker.Files.Controllers;
 
+[ApiKey]
 [ApiController]
 public class FileController : ControllerBase
 {
