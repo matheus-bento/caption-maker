@@ -12,6 +12,9 @@ services:
       - CAPTION_MAKER_JWT_SECRET=${JWT_SECRET}
       - CAPTION_MAKER_IMAGE_STORAGE_URL=${IMAGE_STORAGE_URL}
       - CAPTION_MAKER_IMAGE_STORAGE_API_KEY=${IMAGE_STORAGE_API_KEY}
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - backend
   files:
@@ -38,6 +41,12 @@ services:
       - MYSQL_DATABASE=caption-maker
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "-u", "root", "--password=$MYSQL_ROOT_PASSWORD", "ping", "--silent"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
     volumes:
       - db-data:/var/lib/mysql
     networks:
